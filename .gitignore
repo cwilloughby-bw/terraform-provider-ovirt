@@ -24,3 +24,4 @@ bin/
 terraform.tfvars
 .terraform.lock.hcl
 terraform.d
+.DS_Store

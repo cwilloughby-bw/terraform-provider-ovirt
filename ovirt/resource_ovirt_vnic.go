@@ -11,6 +11,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	ovirtsdk4 "github.com/ovirt/go-ovirt"
 )
 
@@ -38,6 +39,21 @@ func resourceOvirtVnic() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
+			"interface": {
+				Type:     schema.TypeString,
+				Required: false,
+				Optional: true,
+				ForceNew: true,
+				ValidateFunc: validation.StringInSlice([]string{
+					string(ovirtsdk4.NICINTERFACE_E1000),
+					string(ovirtsdk4.NICINTERFACE_PCI_PASSTHROUGH),
+					string(ovirtsdk4.NICINTERFACE_RTL8139),
+					string(ovirtsdk4.NICINTERFACE_RTL8139_VIRTIO),
+					string(ovirtsdk4.NICINTERFACE_SPAPR_VLAN),
+					string(ovirtsdk4.NICINTERFACE_VIRTIO),
+				}, false),
+				Description: "Type of NIC",
+			},
 		},
 	}
 }
@@ -53,6 +69,7 @@ func resourceOvirtVnicCreate(d *schema.ResourceData, meta interface{}) error {
 		Nic(
 			ovirtsdk4.NewNicBuilder().
 				Name(d.Get("name").(string)).
+				Interface(ovirtsdk4.NicInterface(d.Get("interface").(string))).
 				VnicProfile(
 					ovirtsdk4.NewVnicProfileBuilder().
 						Id(d.Get("vnic_profile_id").(string)).

@@ -53,6 +53,7 @@ func resourceOvirtVnic() *schema.Resource {
 					string(ovirtsdk4.NICINTERFACE_VIRTIO),
 				}, false),
 				Description: "Type of NIC",
+				Default:     "virtio",
 			},
 		},
 	}
@@ -115,6 +116,7 @@ func resourceOvirtVnicRead(d *schema.ResourceData, meta interface{}) error {
 
 	d.Set("name", getVnicResp.MustNic().MustName())
 	d.Set("vnic_profile_id", getVnicResp.MustNic().MustVnicProfile().MustId())
+	d.Set("interface", getVnicResp.MustNic().MustInterface())
 
 	return nil
 }
